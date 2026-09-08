@@ -1,0 +1,72 @@
+package DSA.Lab;
+import java.util.Scanner;
+import java.util.Stack;
+
+public class InfixToPostfix {
+    // Method to determine operator precedence
+    static int precedence(char ch) {
+        switch (ch) {
+            case '+':
+            case '-':
+                return 1;
+            case '*':
+            case '/':
+            case '%':
+                return 2;
+            case '^':
+                return 3;
+            default:
+                return -1; 
+        } 
+    }
+    // Method to convert infix expression to postfix
+    static String infixToPostfix(String expression) {
+        Stack<Character> stack = new Stack<>();
+        StringBuilder postfix = new StringBuilder();
+        for (int i = 0; i < expression.length(); i++) {
+            char ch = expression.charAt(i);
+            // If character is an operand
+            if (Character.isLetterOrDigit(ch)) {
+                postfix.append(ch); 
+            }
+            // If opening parenthesis
+            else if (ch == '(') {
+                stack.push(ch); 
+            }
+            // If closing parenthesis
+            else if (ch == ')') {
+                while (!stack.isEmpty() && stack.peek() != '(') {
+                    postfix.append(stack.pop()); 
+                }
+                if (!stack.isEmpty()) {
+                    stack.pop(); // Remove '('
+                }
+            }
+                // If character is an operator
+            else if (ch == '+' || ch == '-' ||
+                    ch == '*' || ch == '/' ||
+                ch == '%' || ch == '^') {
+                while (!stack.isEmpty()
+                        && stack.peek() != '('
+                        && precedence(ch) <= precedence(stack.peek())) {
+                        postfix.append(stack.pop()); 
+                }
+                stack.push(ch); 
+            } 
+        }
+        // Pop remaining operators
+        while (!stack.isEmpty()) {
+            postfix.append(stack.pop()); 
+        }
+        return postfix.toString(); 
+    }
+    // Main method
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter infix expression: ");
+        String expression = sc.nextLine();
+        String postfix = infixToPostfix(expression);
+        System.out.println("Postfix expression: " + postfix);
+        sc.close(); 
+    } 
+}
